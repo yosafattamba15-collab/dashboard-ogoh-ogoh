@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Dashboard Ogoh-Ogoh</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #120c0c;
+        --card: #1d1414;
+        --line: #3a2523;
+        --text: #f1e6d6;
+        --mut: #b9a58f;
+        --red: #c0392b;
+        --gold: #d9a441;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Georgia, "Times New Roman", serif;
+        line-height: 1.55;
+      }
+      header {
+        padding: 40px 20px 24px;
+        text-align: center;
+        background: radial-gradient(ellipse at top, #3a1612, transparent 70%);
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 6vw, 3.2rem);
+        color: var(--gold);
+        letter-spacing: 0.04em;
+      }
+      header p {
+        max-width: 680px;
+        margin: 12px auto 0;
+        color: var(--mut);
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 16px 48px;
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 900px) {
+        .wrap {
+          grid-template-columns: 1fr 300px;
+        }
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .bar input {
+        flex: 1 1 200px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--text);
+        font: inherit;
+      }
+      .chip {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--mut);
+        cursor: pointer;
+        font: inherit;
+      }
+      .chip.on {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--red);
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          border-color 0.15s;
+      }
+      .card:hover {
+        transform: translateY(-3px);
+        border-color: var(--gold);
+      }
+      .ph {
+        aspect-ratio: 4/3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 6px;
+        background: repeating-linear-gradient(
+          45deg,
+          #241917,
+          #241917 12px,
+          #2a1d1a 12px,
+          #2a1d1a 24px
+        );
+        color: var(--mut);
+        font-size: 0.85rem;
+        text-align: center;
+        padding: 8px;
+      }
+      .ph img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .ph.has {
+        padding: 0;
+      }
+      .ph svg {
+        width: 36px;
+        height: 36px;
+        opacity: 0.6;
+      }
+      .body {
+        padding: 12px 14px 16px;
+      }
+      .tag {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--gold);
+      }
+      .body h3 {
+        margin: 4px 0 6px;
+        font-size: 1.15rem;
+      }
+      .body p {
+        margin: 0;
+        color: var(--mut);
+        font-size: 0.9rem;
+      }
+      aside .box {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      aside h2 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+        color: var(--gold);
+      }
+      aside ol {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--mut);
+        font-size: 0.9rem;
+      }
+      aside li {
+        margin-bottom: 8px;
+      }
+      aside b {
+        color: var(--text);
+      }
+      #empty {
+        display: none;
+        color: var(--mut);
+        padding: 24px 0;
+      }
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 20;
+      }
+      .modal.open {
+        display: flex;
+      }
+      .sheet {
+        background: var(--card);
+        border: 1px solid var(--gold);
+        border-radius: 14px;
+        max-width: 640px;
+        width: 100%;
+        max-height: 90vh;
+        overflow: auto;
+      }
+      .sheet .ph {
+        aspect-ratio: 16/9;
+      }
+      .sheet .in {
+        padding: 18px 20px 22px;
+      }
+      .sheet h2 {
+        margin: 4px 0 8px;
+        color: var(--gold);
+      }
+      .sheet h4 {
+        margin: 14px 0 4px;
+        color: var(--text);
+      }
+      .sheet p {
+        margin: 0;
+        color: var(--mut);
+      }
+      .btn {
+        margin-top: 16px;
+        padding: 9px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--gold);
+        background: transparent;
+        color: var(--gold);
+        cursor: pointer;
+        font: inherit;
+      }
+      .btn.red {
+        background: var(--red);
+        border-color: var(--red);
+        color: #fff;
+        margin-left: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Ogoh-Ogoh</h1>
+      <p>
+        Patung raksasa Bali yang diarak pada malam pengerupukan, sehari sebelum
+        Nyepi. Wujudnya menyeramkan karena melambangkan <i>bhuta kala</i>,
+        kekuatan negatif yang dinetralisir agar alam kembali seimbang.
+      </p>
+    </header>
+    <div class="wrap">
+      <main>
+        <div class="bar">
+          <input id="q" type="search" placeholder="Cari tokoh atau cerita…" />
+          <span id="chips"></span>
+        </div>
+        <div class="grid" id="grid"></div>
+        <div id="empty">Tidak ada ogoh-ogoh yang cocok.</div>
+      </main>
+      <aside>
+        <div class="box">
+          <h2>Rangkaian Nyepi</h2>
+          <ol>
+            <li>
+              <b>Melasti</b>: penyucian benda sakral di laut atau sumber air.
+            </li>
+            <li>
+              <b>Tawur Kesanga</b>: upacara pecaruan untuk menyeimbangkan alam.
+            </li>
+            <li>
+              <b>Pengerupukan</b>: ogoh-ogoh diarak keliling desa pada malam
+              hari.
+            </li>
+            <li>
+              <b>Nyepi</b>: sehari penuh hening, tanpa api, kegiatan, bepergian,
+              dan hiburan.
+            </li>
+            <li>
+              <b>Ngembak Geni</b>: saling bermaafan dan kembali beraktivitas.
+            </li>
+          </ol>
+        </div>
+        <div class="box">
+          <h2>Fakta singkat</h2>
+          <p style="margin: 0; color: var(--mut); font-size: 0.9rem">
+            Ogoh-ogoh umumnya dibuat oleh pemuda banjar (<i>sekaa teruna</i>)
+            dari kerangka bambu dan bahan ringan, lalu diarak, diputar-putar di
+            perempatan, dan biasanya dibakar sebagai simbol pemusnahan sifat
+            buruk.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+    <script>
+      var DATA = [
+        {
+          id: 1,
+          nama: "Kumbakarna",
+          kat: "Pewayangan",
+          ring: "Raksasa perkasa adik Rahwana yang gugur membela negerinya.",
+          cerita:
+            "Dalam Ramayana, Kumbakarna adalah adik Rahwana yang sebenarnya bijak dan tahu kakaknya salah menculik Sita. Ia sudah menasihati, namun tetap maju ke medan perang demi membela tanah airnya dan gugur oleh Rama.",
+          makna:
+            "Kesetiaan pada negeri dan kewajiban (dharma), sekaligus pengingat bahwa nafsu makan dan tidur yang berlebihan bisa melemahkan diri.",
+        },
+        {
+          id: 2,
+          nama: "Rangda",
+          kat: "Mitologi",
+          ring: "Ratu leak yang menjadi lawan abadi Barong.",
+          cerita:
+            "Rangda digambarkan dengan taring panjang, lidah menjulur, dan rambut kusut. Dalam pertunjukan Calonarang ia melambangkan kekuatan gelap yang berhadapan dengan Barong, pelindung kebaikan.",
+          makna:
+            "Dua kutub kehidupan (rwa bhineda) yang harus selalu dijaga keseimbangannya.",
+        },
+        {
+          id: 3,
+          nama: "Bhuta Kala",
+          kat: "Simbolik",
+          ring: "Wujud kekuatan negatif alam semesta yang dinetralisir.",
+          cerita:
+            "Bhuta berarti unsur alam dan kala berarti waktu atau energi. Bhuta Kala adalah kekuatan alam yang bila tidak seimbang dapat membawa kekacauan. Ogoh-ogoh dibuat sebagai wujud mereka agar bisa disomya, yaitu dinetralisir lewat upacara.",
+          makna:
+            "Inti tradisi: mengubah energi negatif menjadi harmoni sebelum memasuki Nyepi.",
+        },
+        {
+          id: 4,
+          nama: "Rahwana",
+          kat: "Pewayangan",
+          ring: "Raja Alengka bermuka sepuluh yang dikuasai kesombongan.",
+          cerita:
+            "Rahwana menculik Dewi Sita, istri Rama, dan menolak mengembalikannya meski sudah diperingatkan. Kesombongan dan keserakahannya membawa Alengka pada kehancuran.",
+          makna:
+            "Simbol hawa nafsu dan keangkuhan yang membutakan kebijaksanaan.",
+        },
+        {
+          id: 5,
+          nama: "Kala Rahu",
+          kat: "Mitologi",
+          ring: "Raksasa yang menelan bulan dan matahari saat gerhana.",
+          cerita:
+            "Dalam kisah pengadukan lautan susu, Kala Rahu menyamar dan meminum tirta amerta. Dewa Wisnu memenggal lehernya, tetapi kepalanya telah abadi dan terus mengejar bulan serta matahari, sehingga muncul gerhana.",
+          makna:
+            "Gambaran keserakahan yang mencuri sesuatu yang bukan haknya, dan konsekuensinya.",
+        },
+        {
+          id: 6,
+          nama: "Bhoma",
+          kat: "Simbolik",
+          ring: "Penjaga berwajah garang, putra bumi dalam kisah Wisnu.",
+          cerita:
+            "Bhoma dikenal sebagai putra Dewi Pertiwi (Bumi) dalam tradisi Hindu. Wajahnya yang garang sering dipahat di atas pintu pura sebagai penjaga yang menolak pengaruh buruk.",
+          makna:
+            "Perlindungan dan penolak bala; kekuatan yang dipakai untuk menjaga kesucian tempat.",
+        },
+      ];
+      var photos = {},
+        kat = "Semua",
+        cats = ["Semua", "Pewayangan", "Mitologi", "Simbolik"];
+      var ICON =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>';
+      function esc(s) {
+        return s.replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+      }
+      function ph(d) {
+        return photos[d.id]
+          ? '<div class="ph has"><img alt="' +
+              esc(d.nama) +
+              '" src="' +
+              photos[d.id] +
+              '"></div>'
+          : '<div class="ph">' +
+              ICON +
+              "<span>Foto " +
+              esc(d.nama) +
+              "<br>belum ditambahkan</span></div>";
+      }
+      function chips() {
+        var h = "";
+        cats.forEach(function (c) {
+          h +=
+            '<button class="chip' +
+            (c === kat ? " on" : "") +
+            '" data-k="' +
+            c +
+            '">' +
+            c +
+            "</button> ";
+        });
+        document.getElementById("chips").innerHTML = h;
+      }
+      function render() {
+        var q = document.getElementById("q").value.toLowerCase(),
+          h = "",
+          n = 0;
+        DATA.forEach(function (d) {
+          if (kat !== "Semua" && d.kat !== kat) return;
+          if (q && (d.nama + d.ring + d.cerita).toLowerCase().indexOf(q) < 0)
+            return;
+          n++;
+          h +=
+            '<div class="card" data-id="' +
+            d.id +
+            '">' +
+            ph(d) +
+            '<div class="body"><div class="tag">' +
+            d.kat +
+            "</div><h3>" +
+            d.nama +
+            "</h3><p>" +
+            d.ring +
+            "</p></div></div>";
+        });
+        document.getElementById("grid").innerHTML = h;
+        document.getElementById("empty").style.display = n ? "none" : "block";
+      }
+      function open_(id) {
+        var d = DATA.filter(function (x) {
+          return x.id === id;
+        })[0];
+        document.getElementById("sheet").innerHTML =
+          ph(d) +
+          '<div class="in"><div class="tag">' +
+          d.kat +
+          "</div><h2>" +
+          d.nama +
+          "</h2><h4>Cerita</h4><p>" +
+          d.cerita +
+          "</p><h4>Makna</h4><p>" +
+          d.makna +
+          '</p><button class="btn" id="up">Tambah foto</button><button class="btn red" id="cl">Tutup</button><input type="file" id="f" accept="image/*" hidden></div>';
+        document.getElementById("modal").classList.add("open");
+        document.getElementById("cl").onclick = close_;
+        document.getElementById("up").onclick = function () {
+          document.getElementById("f").click();
+        };
+        document.getElementById("f").onchange = function (e) {
+          var f = e.target.files[0];
+          if (!f) return;
+          photos[id] = URL.createObjectURL(f);
+          open_(id);
+          render();
+        };
+      }
+      function close_() {
+        document.getElementById("modal").classList.remove("open");
+      }
+      document.getElementById("modal").addEventListener("click", function (e) {
+        if (e.target.id === "modal") close_();
+      });
+      document.getElementById("grid").addEventListener("click", function (e) {
+        var c = e.target.closest(".card");
+        if (c) open_(+c.dataset.id);
+      });
+      document.getElementById("chips").addEventListener("click", function (e) {
+        var k = e.target.dataset.k;
+        if (k) {
+          kat = k;
+          chips();
+          render();
+        }
+      });
+      document.getElementById("q").addEventListener("input", render);
+      chips();
+      render();
+    </script>
+  </body>
+</html>
